@@ -36,14 +36,18 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectKey=hello-python \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=http://34.173.27.184:9000 \
-                          -Dsonar.token=$SONAR_TOKEN
-                    '''
+                script {
+                    def scannerHome = tool 'SonarScanner'
+
+                    withSonarQubeEnv('sonarqube') {
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                              -Dsonar.projectKey=hello-python \
+                              -Dsonar.sources=. \
+                              -Dsonar.host.url=http://34.173.27.184:9000 \
+                              -Dsonar.token=\\$SONAR_TOKEN
+                        """
+                    }
                 }
             }
         }
